@@ -52,6 +52,20 @@ Resources:
         - Key: Environment
           Value: !Ref Environment
 
+  StorageStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub 'https://s3.amazonaws.com/${TemplatesBucketName}/stacks/storage.yaml'
+      Parameters:
+        Environment: !Ref Environment
+      Tags:
+        - Key: Project
+          Value: bem14-photo-uploader
+        - Key: ManagedBy
+          Value: CloudFormation
+        - Key: Environment
+          Value: !Ref Environment
+
 Outputs:
 
   VpcId:
@@ -85,3 +99,11 @@ Outputs:
   RDSSecurityGroupId:
     Description: RDS security group
     Value: !GetAtt SecurityStack.Outputs.RDSSecurityGroupId
+
+  ImageBucketName:
+    Description: S3 bucket for uploaded images
+    Value: !GetAtt StorageStack.Outputs.ImageBucketName
+
+  CloudFrontDomainName:
+    Description: CloudFront distribution domain name
+    Value: !GetAtt StorageStack.Outputs.CloudFrontDomainName
