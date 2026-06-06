@@ -118,8 +118,6 @@ Resources:
         ECRRepositoryArn: !GetAtt ECRStack.Outputs.RepositoryArn
         ImageBucketArn: !GetAtt StorageStack.Outputs.ImageBucketArn
         DBSecretArn: !GetAtt DatabaseStack.Outputs.DBSecretArn
-      Capabilities:
-        - CAPABILITY_NAMED_IAM
       Tags:
         - Key: Project
           Value: bem14-photo-uploader
