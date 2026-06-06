@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ECR repository for the photo uploader application image
+
+Parameters:
+  Environment:
+    Type: String
+
+Resources:
+
+  Repository:
+    Type: AWS::ECR::Repository
+    Properties:
+      ImageTagMutability: MUTABLE
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [{
+              "rulePriority": 1,
+              "description": "Keep last 5 images",
+              "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 5
+              },
+              "action": {"type": "expire"}
+            }]
+          }
+      Tags:
+        - Key: Name
+          Value: !Sub '${Environment}-photo-uploader-app'
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: CloudFormation
+
+Outputs:
+
+  RepositoryUri:
+    Description: ECR repository URI
+    Value: !GetAtt Repository.RepositoryUri
+
+  RepositoryArn:
+    Description: ECR repository ARN
+    Value: !GetAtt Repository.Arn
+
+  RepositoryName:
+    Description: ECR repository name
+    Value: !Ref Repository
