@@ -26,7 +26,7 @@ Resources:
   NetworkStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::URLSuffix}/${TemplatesBucketName}/stacks/network.yaml'
+      TemplateURL: !Sub 'https://s3.amazonaws.com/${TemplatesBucketName}/stacks/network.yaml'
       Parameters:
         Environment: !Ref Environment
       Tags:
@@ -40,7 +40,7 @@ Resources:
   SecurityStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub 'https://s3.${AWS::URLSuffix}/${TemplatesBucketName}/stacks/security.yaml'
+      TemplateURL: !Sub 'https://s3.amazonaws.com/${TemplatesBucketName}/stacks/security.yaml'
       Parameters:
         Environment: !Ref Environment
         VpcId: !GetAtt NetworkStack.Outputs.VpcId

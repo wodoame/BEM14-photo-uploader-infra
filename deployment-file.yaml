@@ -3,7 +3,7 @@ parameters:
   GithubOrg: wodoame
   GithubAppRepo: BEM14-photo-uploader-app
   Environment: production
-  TemplatesBucketName: REPLACE_WITH_YOUR_TEMPLATES_BUCKET
+  TemplatesBucketName: bem14-photo-uploader-stacks
 tags:
   Project: bem14-photo-uploader
   ManagedBy: CloudFormation
