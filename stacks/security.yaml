@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Security stack - application-level security groups for the ALB, ECS tasks,
+  and RDS instance. The ALB SG uses the default allow-all egress; a separate
+  SecurityGroupEgress resource then restricts ALB outbound to ECS port 8080
+  only, breaking the potential circular dependency at creation time.
+
+Parameters:
+  Environment:
+    Type: String
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC in which to create the security groups
+
+Resources:
+
+  # ── ALB Security Group ────────────────────────────────────────────────────────
+  # Accepts HTTP traffic from the internet on ports 80 (production) and
+  # 8080 (CodeDeploy test listener for blue/green validation).
+
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow inbound HTTP from internet to ALB
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: HTTP production traffic
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+          Description: HTTP test traffic for blue/green validation
+      Tags:
+        - Key: Name
+          Value: !Sub '${Environment}-alb-sg'
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # ── ECS Security Group ────────────────────────────────────────────────────────
+  # ECS tasks only accept traffic from the ALB; all outbound is permitted
+  # (AWS service calls go via VPC endpoints, DB calls stay within the VPC).
+
+  ECSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow inbound from ALB to ECS tasks
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+          Description: Traffic from ALB
+      Tags:
+        - Key: Name
+          Value: !Sub '${Environment}-ecs-sg'
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  # ── ALB → ECS Egress Rule ─────────────────────────────────────────────────────
+  # Defined as a separate resource so both ALBSecurityGroup and ECSSecurityGroup
+  # can be created independently before this cross-reference is added.
+
+  ALBToECSEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref ALBSecurityGroup
+      IpProtocol: tcp
+      FromPort: 8080
+      ToPort: 8080
+      DestinationSecurityGroupId: !Ref ECSSecurityGroup
+      Description: Allow ALB to forward traffic to ECS tasks
+
+  # ── RDS Security Group ────────────────────────────────────────────────────────
+
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow inbound PostgreSQL from ECS tasks
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref ECSSecurityGroup
+          Description: PostgreSQL from ECS tasks
+      Tags:
+        - Key: Name
+          Value: !Sub '${Environment}-rds-sg'
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: CloudFormation
+
+Outputs:
+
+  ALBSecurityGroupId:
+    Description: ALB security group ID
+    Value: !Ref ALBSecurityGroup
+
+  ECSSecurityGroupId:
+    Description: ECS tasks security group ID
+    Value: !Ref ECSSecurityGroup
+
+  RDSSecurityGroupId:
+    Description: RDS security group ID
+    Value: !Ref RDSSecurityGroup

@@ -1,0 +1,10 @@
+template-file-path: root-stack.yaml
+parameters:
+  GithubOrg: wodoame
+  GithubAppRepo: BEM14-photo-uploader-app
+  Environment: production
+  TemplatesBucketName: REPLACE_WITH_YOUR_TEMPLATES_BUCKET
+tags:
+  Project: bem14-photo-uploader
+  ManagedBy: CloudFormation
+  Environment: production
