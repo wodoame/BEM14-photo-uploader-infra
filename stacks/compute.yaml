@@ -112,7 +112,7 @@ Resources:
       Port: 80
       TargetType: ip
       HealthCheckProtocol: HTTP
-      HealthCheckPath: /
+      HealthCheckPath: /health
       HealthCheckPort: traffic-port
       HealthCheckIntervalSeconds: 30
       HealthCheckTimeoutSeconds: 5
@@ -135,7 +135,7 @@ Resources:
       Port: 80
       TargetType: ip
       HealthCheckProtocol: HTTP
-      HealthCheckPath: /
+      HealthCheckPath: /health
       HealthCheckPort: traffic-port
       HealthCheckIntervalSeconds: 30
       HealthCheckTimeoutSeconds: 5
@@ -173,7 +173,7 @@ Resources:
       TaskRoleArn: !Ref ECSTaskRoleArn
       ContainerDefinitions:
         - Name: photo-uploader
-          Image: !Sub '${ECRRepositoryUri}:latest'
+          Image: '205930639565.dkr.ecr.us-east-1.amazonaws.com/bem14-bootstrap:latest'
           PortMappings:
             - ContainerPort: 80
               Protocol: tcp
