@@ -186,7 +186,6 @@ Resources:
         BlueTargetGroupName: !GetAtt ComputeStack.Outputs.BlueTargetGroupName
         GreenTargetGroupName: !GetAtt ComputeStack.Outputs.GreenTargetGroupName
         ProductionListenerArn: !GetAtt ComputeStack.Outputs.ProductionListenerArn
-        TestListenerArn: !GetAtt ComputeStack.Outputs.TestListenerArn
         CodeDeployRoleArn: !GetAtt IAMStack.Outputs.CodeDeployRoleArn
         CodePipelineRoleArn: !GetAtt IAMStack.Outputs.CodePipelineRoleArn
         EventBridgeRoleArn: !GetAtt IAMStack.Outputs.EventBridgeRoleArn

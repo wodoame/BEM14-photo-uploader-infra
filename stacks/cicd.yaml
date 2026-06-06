@@ -28,9 +28,6 @@ Parameters:
   ProductionListenerArn:
     Type: String
 
-  TestListenerArn:
-    Type: String
-
   CodeDeployRoleArn:
     Type: String
 
@@ -130,9 +127,6 @@ Resources:
             ProdTrafficRoute:
               ListenerArns:
                 - !Ref ProductionListenerArn
-            TestTrafficRoute:
-              ListenerArns:
-                - !Ref TestListenerArn
 
   # ── CodePipeline ──────────────────────────────────────────────────────────────
 

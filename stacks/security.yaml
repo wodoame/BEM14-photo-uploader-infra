@@ -1,9 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
   Security stack - application-level security groups for the ALB, ECS tasks,
-  and RDS instance. The ALB SG uses the default allow-all egress; a separate
-  SecurityGroupEgress resource then restricts ALB outbound to ECS port 8080
-  only, breaking the potential circular dependency at creation time.
+  and RDS instance.
 
 Parameters:
   Environment:
@@ -16,8 +14,6 @@ Parameters:
 Resources:
 
   # ── ALB Security Group ────────────────────────────────────────────────────────
-  # Accepts HTTP traffic from the internet on ports 80 (production) and
-  # 8080 (CodeDeploy test listener for blue/green validation).
 
   ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -30,11 +26,6 @@ Resources:
           ToPort: 80
           CidrIp: 0.0.0.0/0
           Description: HTTP production traffic
-        - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
-          CidrIp: 0.0.0.0/0
-          Description: HTTP test traffic for blue/green validation
       Tags:
         - Key: Name
           Value: !Sub '${Environment}-alb-sg'
@@ -54,8 +45,8 @@ Resources:
       VpcId: !Ref VpcId
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
+          FromPort: 80
+          ToPort: 80
           SourceSecurityGroupId: !Ref ALBSecurityGroup
           Description: Traffic from ALB
       Tags:
@@ -65,20 +56,6 @@ Resources:
           Value: !Ref Environment
         - Key: ManagedBy
           Value: CloudFormation
-
-  # ── ALB → ECS Egress Rule ─────────────────────────────────────────────────────
-  # Defined as a separate resource so both ALBSecurityGroup and ECSSecurityGroup
-  # can be created independently before this cross-reference is added.
-
-  ALBToECSEgress:
-    Type: AWS::EC2::SecurityGroupEgress
-    Properties:
-      GroupId: !Ref ALBSecurityGroup
-      IpProtocol: tcp
-      FromPort: 8080
-      ToPort: 8080
-      DestinationSecurityGroupId: !Ref ECSSecurityGroup
-      Description: Allow ALB to forward traffic to ECS tasks
 
   # ── RDS Security Group ────────────────────────────────────────────────────────
 

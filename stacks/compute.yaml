@@ -109,7 +109,7 @@ Resources:
       Name: !Sub '${Environment}-blue-tg'
       VpcId: !Ref VpcId
       Protocol: HTTP
-      Port: 8080
+      Port: 80
       TargetType: ip
       HealthCheckProtocol: HTTP
       HealthCheckPath: /
@@ -132,7 +132,7 @@ Resources:
       Name: !Sub '${Environment}-green-tg'
       VpcId: !Ref VpcId
       Protocol: HTTP
-      Port: 8080
+      Port: 80
       TargetType: ip
       HealthCheckProtocol: HTTP
       HealthCheckPath: /
@@ -159,16 +159,6 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref BlueTargetGroup
 
-  TestListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      LoadBalancerArn: !Ref ALB
-      Protocol: HTTP
-      Port: 8080
-      DefaultActions:
-        - Type: forward
-          TargetGroupArn: !Ref GreenTargetGroup
-
   # ── ECS Task Definition ───────────────────────────────────────────────────────
 
   TaskDefinition:
@@ -185,7 +175,7 @@ Resources:
         - Name: photo-uploader
           Image: !Sub '${ECRRepositoryUri}:latest'
           PortMappings:
-            - ContainerPort: 8080
+            - ContainerPort: 80
               Protocol: tcp
           Environment:
             - Name: DB_HOST
@@ -217,7 +207,6 @@ Resources:
     Type: AWS::ECS::Service
     DependsOn:
       - ProductionListener
-      - TestListener
     Properties:
       ServiceName: !Sub '${Environment}-photo-uploader-svc'
       Cluster: !Ref ECSCluster
@@ -237,7 +226,7 @@ Resources:
           AssignPublicIp: DISABLED
       LoadBalancers:
         - ContainerName: photo-uploader
-          ContainerPort: 8080
+          ContainerPort: 80
           TargetGroupArn: !Ref BlueTargetGroup
       Tags:
         - Key: Environment
@@ -277,9 +266,6 @@ Outputs:
 
   ProductionListenerArn:
     Value: !Ref ProductionListener
-
-  TestListenerArn:
-    Value: !Ref TestListener
 
   TaskDefinitionArn:
     Value: !Ref TaskDefinition
