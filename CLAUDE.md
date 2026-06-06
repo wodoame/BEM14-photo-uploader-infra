@@ -10,6 +10,17 @@ The distinguishing feature of this lab (vs. BEM13) is the use of **nested stacks
 
 ---
 
+## First-time Setup
+
+After cloning, run once to activate git hooks:
+```bash
+./setup.sh
+```
+
+This configures a pre-push hook that automatically syncs changed child stack templates to S3 before every `git push`.
+
+---
+
 ## Common Commands
 
 **Lint templates:**
