@@ -182,7 +182,8 @@ Resources:
                 AppSpecTemplateArtifact: DeployBundle
                 AppSpecTemplatePath: appspec.yaml
                 Image1ArtifactName: ImageDetails
-                Image1ContainerName: photo-uploader
+                # Placeholder text in taskdef.json (not the ECS container name)
+                Image1ContainerName: IMAGE1_NAME
               InputArtifacts:
                 - Name: ImageDetails
                 - Name: DeployBundle
