@@ -180,6 +180,7 @@
         "secretsmanager:PutSecretValue",
         "secretsmanager:DescribeSecret",
         "secretsmanager:GetSecretValue",
+        "secretsmanager:GetRandomPassword",
         "secretsmanager:TagResource",
         "secretsmanager:UntagResource"
       ],
