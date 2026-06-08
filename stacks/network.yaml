@@ -220,6 +220,7 @@ Resources:
 
   # ── VPC Endpoints ─────────────────────────────────────────────────────────────
 
+  # Allows ECS tasks to pull image layers from S3 (used by ECR) without leaving the VPC.
   S3GatewayEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -230,6 +231,7 @@ Resources:
         - !Ref PrivateRouteTable1
         - !Ref PrivateRouteTable2
 
+  # Allows ECS tasks to call the ECR API (authenticate, describe images) without a NAT Gateway.
   ECRApiEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -243,6 +245,7 @@ Resources:
         - !Ref VpcEndpointSecurityGroup
       PrivateDnsEnabled: true
 
+  # Allows ECS tasks to pull container images from ECR (Docker registry protocol) without a NAT Gateway.
   ECRDkrEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -256,6 +259,7 @@ Resources:
         - !Ref VpcEndpointSecurityGroup
       PrivateDnsEnabled: true
 
+  # Allows ECS tasks to ship logs to CloudWatch Logs without leaving the VPC.
   CloudWatchLogsEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -269,6 +273,7 @@ Resources:
         - !Ref VpcEndpointSecurityGroup
       PrivateDnsEnabled: true
 
+  # Allows the ECS control plane to manage tasks in private subnets (start, stop, describe).
   ECSEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -282,6 +287,7 @@ Resources:
         - !Ref VpcEndpointSecurityGroup
       PrivateDnsEnabled: true
 
+  # Allows the ECS agent running on each Fargate task to communicate with the ECS backend.
   ECSAgentEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -295,6 +301,7 @@ Resources:
         - !Ref VpcEndpointSecurityGroup
       PrivateDnsEnabled: true
 
+  # Allows the ECS agent to report CPU/memory metrics to CloudWatch without a NAT Gateway.
   ECSTelemetryEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -308,6 +315,7 @@ Resources:
         - !Ref VpcEndpointSecurityGroup
       PrivateDnsEnabled: true
 
+  # Allows ECS tasks to fetch the DB credentials secret at runtime without leaving the VPC.
   SecretsManagerEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:

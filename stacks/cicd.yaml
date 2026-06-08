@@ -208,6 +208,8 @@ Resources:
             - SUCCESS
           repository-name:
             - !Ref ECRRepositoryName
+          image-tag:
+            - latest
       State: ENABLED
       Targets:
         - Id: TriggerPipeline

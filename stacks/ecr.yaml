@@ -16,16 +16,30 @@ Resources:
       LifecyclePolicy:
         LifecyclePolicyText: |
           {
-            "rules": [{
-              "rulePriority": 1,
-              "description": "Keep last 5 images",
-              "selection": {
-                "tagStatus": "any",
-                "countType": "imageCountMoreThan",
-                "countNumber": 5
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Expire untagged images after 1 day",
+                "selection": {
+                  "tagStatus": "untagged",
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": 1
+                },
+                "action": {"type": "expire"}
               },
-              "action": {"type": "expire"}
-            }]
+              {
+                "rulePriority": 2,
+                "description": "Keep only the 5 most recent tagged images",
+                "selection": {
+                  "tagStatus": "tagged",
+                  "tagPatternList": ["*"],
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": {"type": "expire"}
+              }
+            ]
           }
       Tags:
         - Key: Name
