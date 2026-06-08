@@ -16,6 +16,8 @@
         "iam:GetRolePolicy",
         "iam:TagRole",
         "iam:UntagRole",
+        "iam:ListRolePolicies",
+        "iam:ListAttachedRolePolicies",
         "iam:CreateOpenIDConnectProvider",
         "iam:DeleteOpenIDConnectProvider",
         "iam:GetOpenIDConnectProvider",
@@ -84,7 +86,10 @@
         "elasticloadbalancing:AddTags",
         "elasticloadbalancing:RemoveTags",
         "elasticloadbalancing:DescribeTags",
-        "elasticloadbalancing:DescribeTargetHealth"
+        "elasticloadbalancing:DescribeTargetHealth",
+        "elasticloadbalancing:DescribeTargetGroupAttributes",
+        "elasticloadbalancing:DescribeLoadBalancerAttributes",
+        "elasticloadbalancing:DescribeRules"
       ],
       "Resource": "*"
     },
